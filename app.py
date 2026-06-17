@@ -34,10 +34,11 @@ def check_guess(guess, secret):
         return "Win", "🎉 Correct!"
 
     try:
+        # FIXME: Logic breaks here - comparison operators are inverted!
         if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
+            return "Too High", "📉 Go LOWER!"
         else:
-            return "Too Low", "📉 Go LOWER!"
+            return "Too Low", "📈 Go HIGHER!"
     except TypeError:
         g = str(guess)
         if g == secret:
@@ -92,8 +93,11 @@ st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
+# FIX: Initialize attempts to 0 to display 8 attempts on first run
+# AI agent correctly identified the off-by-one error: incrementing before validation
+# caused the game to start with 7 attempts. Now only valid guesses consume attempts.
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -118,9 +122,11 @@ with st.expander("Developer Debug Info"):
     st.write("Difficulty:", difficulty)
     st.write("History:", st.session_state.history)
 
+# FIX: Removed key=f"guess_input_{difficulty}" which caused "jw is not defined" error
+# The dynamic key with f-string was generating invalid JavaScript identifiers.
+# Streamlit's session key must be simple identifiers, not expressions.
 raw_guess = st.text_input(
     "Enter your guess:",
-    key=f"guess_input_{difficulty}"
 )
 
 col1, col2, col3 = st.columns(3)
@@ -132,8 +138,12 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
+    # FIXME: Logic breaks here - history and score should be reset too
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
+    st.session_state.history = []
+    st.session_state.score = 0
+    st.session_state.status = "playing"
     st.success("New game started.")
     st.rerun()
 
@@ -145,20 +155,19 @@ if st.session_state.status != "playing":
     st.stop()
 
 if submit:
-    st.session_state.attempts += 1
-
     ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:
+        # FIX: Type mismatch resolved - always keep secret as int for comparison
+        # AI agent identified that converting secret to string on even attempts caused
+        # type coercion bugs and inverted hints. Now guess_int always compares to int.
+        st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 

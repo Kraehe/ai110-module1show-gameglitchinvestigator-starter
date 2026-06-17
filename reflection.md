@@ -33,17 +33,47 @@ Document at least 3 bugs you found. Add rows as needed.
 ## 2. How did you use AI as a teammate?
 
 - Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
+
+  I used GitHub Copilot (Copilot CLI and VS Code agent).
+
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
+
+  **Correct AI Suggestion: Identifying the off-by-one error in the attempts counter**
+  
+  The AI agent correctly diagnosed that `st.session_state.attempts += 1` was being executed BEFORE validating whether the guess was valid. The AI suggested moving this increment to AFTER the `parse_guess()` validation check. This meant invalid inputs (empty strings, non-numbers) would no longer consume an attempt. 
+  
+  **Verification:** I manually tested by entering invalid guesses (blank input, random letters) and confirmed that the attempts counter no longer decremented. Then I ran the game with valid guesses and confirmed it properly started with 8 attempts instead of 7. The "Attempts left" display now correctly shows 8 on page load.
+
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
+  **Incorrect AI Suggestion: Misunderstanding the hint logic**
+  
+  The AI agent initially suggested that the hint logic was correct and that the issue might be with how the secret number was generated. However, upon reviewing the code myself, I realized that the hint logic was indeed reversed (it was telling players to guess higher when they should guess lower and vice versa). The AI's suggestion led me down a rabbit hole of checking the random number generation instead of looking at the hint conditions.
+
+  **Verification:** I manually tested by entering guesses of 1 and 100 and observed that the hints were incorrect (told me to go higher when I guessed 100, which is impossible). This confirmed that the issue was with the hint logic, not the secret number generation.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
+
+  I verified each fix by running the Streamlit app locally and testing the specific scenarios mentioned in the bug report. For the attempts counter, I reloaded the page and confirmed it showed 8 attempts instead of 7. For the hint reversal, I tested with guesses of 1, 50, and 99 to confirm the hints were correct in both directions. I also tested the reset functionality by playing through a game, losing, and then hitting "New Game" to confirm the game state properly reset (attempts, history, and secret number).
+
+- Describe at least one test you ran (manual or using pytest) and what it showed you about your code.
+
+  **Manual Integration Test:** I played through a complete game on Normal difficulty (range 1-100, 8 attempts). Testing sequence:
+  1. Entered invalid input (blank) → confirmed attempts counter stayed at 8
+  2. Entered guess 50 (assuming secret was different) → received valid hint
+  3. Continued guessing with hints guiding me correctly → won the game
+  4. Hit "New Game" button → verified the game properly reset (history cleared, attempts reset to 8, new secret generated)
+  5. Entered guess 1,received "Go HIGHER!" (correct)
+  6. Entered guess 100, received "Go LOWER!" (correct)
+  
+  This showed that all three bugs were fixed: attempts initialization, hint direction, and game reset.
+
 - Did AI help you design or understand any tests? How?
+
+  The AI agent helped structure the debugging process by identifying  and explaining the fixes and tests for each bug (entering invalid input, testing edge guesses like 1 and 100, testing the reset flow). This systematic approach helped me verify that the fixes were complete and not causing new issues.
 
 ---
 
