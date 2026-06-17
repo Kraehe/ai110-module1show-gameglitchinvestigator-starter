@@ -86,6 +86,8 @@ Document at least 3 bugs you found. Add rows as needed.
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
+  - Using one session to fix a bug, keeps AI suggestions focused and prevents me from getting overwhelmed by too many changes at once. It also allows me to verify that each fix is working before moving on to the next issue.
 - What is one thing you would do differently next time you work with AI on a coding task?
+  - I would try to be more specific in my prompts to the AI, especially when asking for help with debugging. For example, instead of asking "How do I fix this bug?" I could ask "How do I fix the off-by-one error in my attempts counter?" This would help the AI provide more targeted suggestions and reduce the chances of it giving me misleading information.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+  - This project showed me that while AI can be a powerful tool for generating code and suggesting fixes, it's crucial to critically evaluate its suggestions and not take them at face value. I also learned that AI can critically misunderstand the context or logic of the code, so it's imperitave to really understand the codebase and to test changes thoroughly.
