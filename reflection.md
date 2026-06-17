@@ -7,6 +7,9 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - What did the game look like the first time you ran it?
 - List at least two concrete bugs you noticed at the start  
   (for example: "the hints were backwards").
+- The 'hints' were not accurate, giving players incorrect information (ex. suggesting to guess a higher number than 100 when the previous guess already was 100).
+- Upon loading the page for the first time the game shows that the player has already used 1 attempt, starting with 7 attempts left instead of 8.
+- The game over state continues even after pressing new game, not allowing players to play again without refreshing the page.
 
 **Bug Reproduction Log**
 
@@ -14,9 +17,16 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Refresh | Game starts with 8 attempts | Game starts with 7 attempts | Uncaught ReferenceError: jw is not defined
+    at <anonymous>:1:9
+    at <anonymous>:1:54 |
+| User inputs 99 as a guess | Win, or hint suggests to guess lower | Hint suggests to guess higher. Wins if the guess is correct. | VM595:1 Uncaught ReferenceError: jw is not defined
+    at <anonymous>:1:9
+    at <anonymous>:1:54 |
+| user inputs 1 as a guess | Win, or hint suggests to guess higher | Hint suggests to guess lower. Wins if the guess is correct. | VM595:1 Uncaught ReferenceError: jw is not defined
+    at <anonymous>:1:9
+    at <anonymous>:1:54 |
+| Press New Game button after running out of attempts | Game resets with 8 attempts |  User is unable to submit additional guesses.  History of previous attempts are not cleared and attempts left are not reset even though the UI shows that the user now has 8 attempts.| Uncaught ReferenceError: jw is not defined
 
 ---
 
